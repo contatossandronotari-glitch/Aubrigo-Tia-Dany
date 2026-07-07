@@ -1127,6 +1127,6 @@ async function startServer() {
   });
 }
 
-if (!process.env.NETLIFY) {
+if (!isServerlessRuntime) {
   startServer();
 }
