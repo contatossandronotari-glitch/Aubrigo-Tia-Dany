@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 
@@ -1100,6 +1099,11 @@ Dado as seguintes informações do animal:
 
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
+    const importDevDependency = new Function(
+      "specifier",
+      "return import(specifier)"
+    ) as (specifier: string) => Promise<typeof import("vite")>;
+    const { createServer: createViteServer } = await importDevDependency("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
