@@ -188,17 +188,82 @@ export default function DonationArea() {
                   </select>
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="donation-method" className="text-sm font-bold text-stone-800 font-display">3. Forma de Pagamento</label>
-                  <select
-                    id="donation-method"
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                    className="w-full px-4 py-3 border border-stone-200 rounded-xl bg-stone-50 text-stone-800 text-sm focus:bg-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all cursor-pointer"
-                  >
-                    <option value="Pix">Pix (Aprovação Instantânea)</option>
-                    <option value="Boleto">Boleto Bancário</option>
-                  </select>
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-stone-800 font-display block">3. Forma de Pagamento</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Pix Card */}
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Pix")}
+                      className={`p-4 rounded-2xl border text-left flex flex-col justify-between transition-all cursor-pointer relative overflow-hidden h-28 ${
+                        paymentMethod === "Pix"
+                          ? "border-amber-500 bg-amber-50/20 ring-2 ring-amber-500/10"
+                          : "border-stone-200 hover:border-stone-300 bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <QrCode className={`h-5 w-5 ${paymentMethod === "Pix" ? "text-amber-500" : "text-stone-400"}`} />
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold text-[9px] uppercase tracking-wide">Rápido</span>
+                      </div>
+                      <div className="mt-auto">
+                        <p className="font-bold text-xs text-stone-800">Pix</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5 leading-tight">Chave Celular Instantânea</p>
+                      </div>
+                    </button>
+
+                    {/* Cartão de Crédito Card */}
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Cartão")}
+                      className={`p-4 rounded-2xl border text-left flex flex-col justify-between transition-all cursor-pointer relative overflow-hidden h-28 ${
+                        paymentMethod === "Cartão"
+                          ? "border-purple-400 bg-purple-50/10 ring-2 ring-purple-500/10"
+                          : "border-stone-200 hover:border-stone-300 bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <CreditCard className={`h-5 w-5 ${paymentMethod === "Cartão" ? "text-purple-500" : "text-stone-400"}`} />
+                        <span className="px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded font-bold text-[9px] uppercase tracking-wide">Manutenção</span>
+                      </div>
+                      <div className="mt-auto">
+                        <p className="font-bold text-xs text-stone-800">Cartão de Crédito</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5 leading-tight">Mercado Pago (Em breve)</p>
+                      </div>
+                    </button>
+
+                    {/* Boleto Card */}
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Boleto")}
+                      className={`p-4 rounded-2xl border text-left flex flex-col justify-between transition-all cursor-pointer relative overflow-hidden h-28 ${
+                        paymentMethod === "Boleto"
+                          ? "border-amber-500 bg-amber-50/20 ring-2 ring-amber-500/10"
+                          : "border-stone-200 hover:border-stone-300 bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <FileText className={`h-5 w-5 ${paymentMethod === "Boleto" ? "text-amber-500" : "text-stone-400"}`} />
+                        <span className="px-1.5 py-0.5 bg-stone-100 text-stone-600 rounded font-bold text-[9px] uppercase tracking-wide">Boleto</span>
+                      </div>
+                      <div className="mt-auto">
+                        <p className="font-bold text-xs text-stone-800">Boleto Bancário</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5 leading-tight">Compensação em até 3 dias</p>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Under Maintenance Notification for Card Payment */}
+                  {paymentMethod === "Cartão" && (
+                    <div className="p-3 bg-purple-50 border border-purple-200 rounded-2xl flex items-start gap-2 text-purple-800 text-xs animate-fade-in">
+                      <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-purple-600" />
+                      <div>
+                        <p className="font-bold">Canal de Cartão em Manutenção</p>
+                        <p className="text-[11px] text-purple-700/95 mt-0.5 leading-relaxed">
+                          Estamos integrando o checkout oficial do Mercado Pago para sua maior segurança e facilidade. Por favor, utilize a opção de <strong>Pix</strong> ou de <strong>Boleto</strong> enquanto concluímos essa melhoria!
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -246,11 +311,16 @@ export default function DonationArea() {
               {/* Submit Action */}
               <button
                 type="submit"
-                disabled={isSubmitting || amount <= 0}
+                disabled={isSubmitting || amount <= 0 || paymentMethod === "Cartão"}
                 className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-all text-base shadow-lg shadow-amber-500/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <HeartHandshake className="h-5 w-5" />
-                {isSubmitting ? "Processando..." : `Doar R$ ${amount.toLocaleString()} Agora`}
+                {paymentMethod === "Cartão" 
+                  ? "Meio de Pagamento em Manutenção" 
+                  : isSubmitting 
+                  ? "Processando..." 
+                  : `Doar R$ ${amount.toLocaleString()} Agora`
+                }
               </button>
             </form>
           ) : (
