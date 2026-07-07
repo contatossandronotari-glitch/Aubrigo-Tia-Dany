@@ -7,9 +7,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const app = express();
+export const app = express();
 const PORT = 3000;
-const DB_DIR = path.join(process.cwd(), "data");
+const DB_DIR = process.env.NETLIFY
+  ? path.join("/tmp", "aubrigo-tia-dany-data")
+  : path.join(process.cwd(), "data");
 const DB_FILE = path.join(DB_DIR, "db.json");
 
 // Middleware to parse large JSON (since we might send base64 images for the dog profile)
@@ -1116,4 +1118,6 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!process.env.NETLIFY) {
+  startServer();
+}
