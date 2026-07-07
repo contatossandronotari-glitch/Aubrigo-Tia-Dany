@@ -8,7 +8,12 @@ dotenv.config();
 
 export const app = express();
 const PORT = 3000;
-const DB_DIR = process.env.NETLIFY
+const isServerlessRuntime = Boolean(
+  process.env.NETLIFY ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  process.env.LAMBDA_TASK_ROOT
+);
+const DB_DIR = isServerlessRuntime
   ? path.join("/tmp", "aubrigo-tia-dany-data")
   : path.join(process.cwd(), "data");
 const DB_FILE = path.join(DB_DIR, "db.json");
