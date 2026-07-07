@@ -1,0 +1,6 @@
+{
+  "name": "Portal de Adoção de Cachorros",
+  "description": "Uma plataforma completa para adoção de cães, doações financeiras, cadastro de voluntários e painel administrativo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
